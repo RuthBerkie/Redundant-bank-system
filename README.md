@@ -1,13 +1,16 @@
 📶 Redundant-bank-system
 
   As the name states, its a redundant connection of different network components to have efficient and secure way of transferring packets.
-
-⚙️ components used:-
-
-   ◈ 4 Routers
-   ◈ 4 layer 3 Switches
-   ◈ 12 layer 2 Switches
-   ◈ and other components like Computers,Printers and Access Points
+  
+  ⚙️ Components used:-
+  
+    ◈ 4 Routers
+   
+    ◈ 4 layer 3 Switches
+   
+    ◈ 12 layer 2 Switches
+   
+    ◈ and other components like Computers,Printers and Access Points
 
 💻 configuration done:-
  
@@ -25,4 +28,5 @@
 🎯 To run it locally:- after downloading
 
   ◈ Either pick a packet and assign it to 2 end devices and watch it in real-time by run a simulation.
+  
   ◈ or go to the terminal of the pc and ping the device of interest.
