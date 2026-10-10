@@ -4,38 +4,38 @@ As the name states, its a redundant connection of different network components t
 
 ⚙️ Components used:-
 
-  ◈ 4 Routers
+    ◈ 4 Routers
   
-  ◈ 4 layer 3 Switches
+    ◈ 4 layer 3 Switches
   
-  ◈ 12 layer 2 Switches
-  
-  ◈ and other components like Computers,Printers and Access Points
+    ◈ 12 layer 2 Switches
+   
+    ◈ and other components like Computers,Printers and Access Points
 
 💻 configuration done:-
 
-  ▫️Basic setting (hostname,motd,password) config to all the devices,
+    ▫️Basic setting (hostname,motd,password) config to all the devices,
   
-  ▫️SSH on the Routers and Switches,
+    ▫️SSH on the Routers and Switches,
   
-  ▫️VLAN assignments and choosing access and trunk ports,
+    ▫️VLAN assignments and choosing access and trunk ports,
   
-  ▫️Switchport-security,
+    ▫️Switchport-security,
   
-  ▫️Subnetting and IP addressing,
+    ▫️Subnetting and IP addressing,
   
-  ▫️OSPF on the Routers and on the layer 3 Switches,
+    ▫️OSPF on the Routers and on the layer 3 Switches,
   
-  ▫️Static IP address to server devices,
+    ▫️Static IP address to server devices,
   
-  ▫️DHCP server device configuration,
+    ▫️DHCP server device configuration,
   
-  ▫️inter VLAN routing and IP DHCP helper address on the layer 3 switches,
+    ▫️inter VLAN routing and IP DHCP helper address on the layer 3 switches,
   
-  ▫️wireless network configurations.
+    ▫️wireless network configurations.
   
 🎯 To run it locally:- after downloading
 
-◈ Either pick a packet and assign it to 2 end devices and watch it in real-time by run a simulation.
+    ◈ Either pick a packet and assign it to 2 end devices and watch it in real-time by run a simulation.
 
-◈ or go to the terminal of the pc and ping the device of interest.
+    ◈ or go to the terminal of the pc and ping the device of interest.
