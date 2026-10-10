@@ -1,13 +1,16 @@
 📶 Redundant-bank-system
+
 As the name states, its a redundant connection of different network components to have efficient and secure way of transferring packets.
 
 ⚙️ Components used:-
+
   ◈ 4 Routers
   ◈ 4 layer 3 Switches
   ◈ 12 layer 2 Switches
   ◈ and other components like Computers,Printers and Access Points
 
 💻 configuration done:-
+
   ▫️Basic setting (hostname,motd,password) config to all the devices,
   ▫️SSH on the Routers and Switches,
   ▫️VLAN assignments and choosing access and trunk ports,
