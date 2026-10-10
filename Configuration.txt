@@ -1,0 +1,768 @@
+for this project, 12 2nd layer switch, 4 3rd layer switch, and 4 routers
+the 2nd layer switches will be to the devices and the 3rd layer switches will be connected to the 2nd switches and the routers will be connected to the 3rd layer switches
+
+software used for the project:-MS Visio, visual paradigm (this is used to draw the model), packet tracer for the simulation.
+
+configurations being implemented:
+1,basic settings to all devices plus ssh on the routers and 13 switches.
+   hostname
+   line console and vty passwords
+   disable domain ip lookup
+
+2,VLANS assignment plus all access and trunk ports
+  create vlans in every department
+  vlans(10, 20, 30....)
+  each vlan should be a different subnetwork
+
+3,switchport security to all 12 switches
+4,subnetting and ip addressing
+5,ospf on the routing and 13 switches
+6,static ip address to server room devices
+7,dhcp server device configuration
+8,inter-vlan routing on the 13th switches plus ip dhcp helper address
+9,wireless network configuration
+10,verifying and testing configuration
+
+
+
+
+there are four floors
+1st floor
+ department: in each department there needs to be 20 PCs and 4 printers, the 4th floor will have 2 printers and the sever room will have 2 admins and pcs, with 3 servers
+so we need at least 24 hosts but there could be additional pc and printers so for best case scenario, the host given will be 64. a /26 or 192
+   management
+   research
+   human research
+
+2nd floor
+   marketing
+   accounting
+   finance
+
+3rd floor
+   logistics and store
+   customer care
+   guest area
+
+4th floor
+   administration
+   ICT
+   server room
+
+
+management's switch
+ 
+2nd layer SWITCH
+
+enable       !user EXEC mode, view system status  
+config t     !global configuration mode
+hostname F1-mgt-SW
+banner motd #
+________________________________________________________
+
+                      F1-mgt-SW
+________________________________________________________#
+
+line console 0   !represents the index number of the specific physical port password cisco   !setting the password as cisco
+login            !when connected ask(force) for a password
+exit
+
+
+line vty 0 15    !Virtual Teletype (VTY) lines.not secure for the real world
+password cisco   !remote access password for these VTY lines to cisco
+login exit
+ 
+no ip domain-lookup         !stops that annoying freeze instantly.
+enable password cisco
+service password-encryption !scrambles and encrypts all plaintext passwords 
+do write
+
+################################################
+hostname for every second layer switch 
+
+enable
+config t
+
+hostname layer-2-SW
+banner motd #
+
+_________________________________________________
+
+                 Layer-2-Sw
+_________________________________________________
+
+line console 0
+password cisco
+login
+exit
+
+line vty 0 15
+password cisco
+login 
+exit
+
+no ip domain-lookup
+enable password cisco
+service security-encryption
+
+do write
+
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk  !connect Switch-to-Switch or Switch-to-Router.
+exit
+
+vlan 10
+name mgt
+exit
+
+interface range fa0/3-24
+switchport mode access
+switchport access vlan 10
+switchport port-security maximum 2   !permanently locked in(only 2 devices)
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk
+exit
+
+vlan 20
+name Res
+exit
+
+interface range fa0/3-24
+switchport mode access
+switchport access vlan 20
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk
+exit
+
+vlan 30
+name HR
+exit
+
+interface range fa0/3-24
+switchport mode access
+switchport access vlan 30
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk
+exit
+
+vlan 40
+name mkt
+exit
+
+interface range fa0/3-24
+switchport mode access
+switchport access vlan 40
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk
+exit
+
+vlan 50
+name acc
+exit
+
+interface range fa0/3-24
+switchport mode access  !End-Device Connections (access mode)
+switchport access vlan 50
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+----------------------------
+enable
+config t
+interface range fa0/1-2
+switchport mode trunk !Switch-to-Switch Connections (trunk mode)
+exit
+
+vlan 60
+name fin
+exit
+
+interface range fa0/3-24
+switchport mode access   !safely locked inside their designated VLAN.
+switchport access vlan 60
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+do write
+
+--------------------------------------------
+
+
+
+
+do show port-security
+############################################
+
+layer 3 switch
+
+enable
+config t
+hostname F1-L3SW
+banner motd #
+
+_______________________________________________
+
+            Floor 1 layer 3 switch
+
+_______________________________________________#
+
+
+do show start
+do show port-security
+
+
+
+__________________________________________________
+
+                  F1-L3SW
+__________________________________________________#
+
+line console 0
+password cisco
+login
+exit
+
+
+ip domain-name cisco.net       !DNS domain name of the switch.
+username cisco password cisco  !local user account in the switch's database 
+crypto key generate rsa        !encrypt the data passing in between
+1024                    !minimum length required to activate SSH Version 2
+line vty 0 15
+login local             !critical security lockdown
+transport input ssh
+exit
+
+do write
+
+----------------------------------------
+
+interface range gig1/0/1-2
+no switchport    !switching port into a routed port.
+exit 
+do write
+
+interface range gig1/0/3-8
+switchport mode trunk !slap an 802.1Q tag on the packets(a unique path) 
+exit
+do write
+
+interface gig1/0/1
+ip address 10.10.10.1 255.255.255.252
+exit
+
+interface gig1/0/2
+ip address 10.10.10.9 255.255.255.252
+exit
+
+do write
+----------------------------------------
+for all 3rd layer switches
+
+interface range gig1/0/1-2
+no switchport !The Router Connection (no switchport)
+exit
+
+interface range gig1/0/3-8
+switchport mode trunk
+exit
+
+1st floor: 
+interface gig1/0/1
+ip address 10.10.10.1 255.255.255.252
+exit
+
+interface gig1/0/2
+ip address 10.10.10.9 255.255.255.252
+exit
+
+
+ip routing
+router ospf 10 !Open Shortest Path First,10(formality) represents the Process ID.
+network 10.10.10.0 0.0.0.3 area 0 !Backbone Area
+network 10.10.10.8 0.0.0.3 area 0
+
+network 192.168.10.0 0.0.0.63 area 0
+network 192.168.10.64 0.0.0.63 area 0
+network 192.168.10.128 0.0.0.63 area 0
+network 192.168.10.192 0.0.0.63 area 0
+network 192.168.11.0 0.0.0.63 area 0
+network 192.168.11.64 0.0.0.63 area 0
+
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+vlan 50
+vlan 60
+exit
+
+interface vlan 10
+no shutdown
+ip address 192.168.10.1 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 20
+no shutdown
+ip address 192.169.10.65 255.255.255.192
+ip helper-address 192.168.12.196
+
+interface vlan 30
+no shutdown
+ip address 192.168.10.129 255.255.255.192
+ip helper-address 192.168.12.196
+
+interface vlan 40
+no shutdown
+ip address 192.168.10.193 255.255.255.192
+ip helper-address 192.168.12.196
+
+interface vlan 50
+no shutdown
+ip address 192.168.11.1 255.255.255.192
+ip helper-address 192.168.12.196
+
+interface vlan 60
+no shutdown
+ip address 192.168.11.65 255.255.255.192
+ip helper-address 192.168.12.196
+
+do write
+ 
+
+2nd floor:
+interface gig1/0/1
+ip address 10.10.10.5 255.255.255.252
+exit
+
+interface gig1/0/2
+ip address 10.10.10.13 255.255.255.252 
+exit
+
+ip routing
+router osfp 10
+network 10.10.10.4 0.0.0.3 area 0
+network 10.10.10.12 0.0.0.3 area 0
+
+network 192.168.10.0 0.0.0.63 area 0
+network 192.168.10.64 0.0.0.63 area 0
+network 192.168.10.128 0.0.0.63 area 0
+network 192.168.10.192 0.0.0.63 area 0
+network 192.168.11.0 0.0.0.63 area 0
+network 192.168.11.64 0.0.0.63 area 0
+
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+vlan 50
+vlan 60
+
+do show vlan database
+
+interface vlan 10
+no shutdown
+ip address 192.168.10.1 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 20
+no shutdown
+ip address 192.169.10.65 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 30
+no shutdown
+ip address 192.168.10.129 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 40
+no shutdown
+ip address 192.168.10.193 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 50
+no shutdown
+ip address 192.168.11.1 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 60
+no shutdown
+ip address 192.168.11.65 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+do write
+ 
+
+3rd floor:
+interface gig1/0/1
+ip address 10.10.10.41 255.255.255.252
+exit
+
+interface gig1/0/2
+ip address 10.10.10.45 255.255.255.252
+exit
+
+ip routing
+router osfp 10
+network 10.10.10.40 0.0.0.3 area 0
+network 10.10.10.48 0.0.0.3 area 0
+
+network 192.168.11.128 0.0.0.63 area 0
+network 192.168.11.192 0.0.0.63 area 0
+network 192.168.12.0 0.0.0.63 area 0
+network 192.168.12.64 0.0.0.63 area 0
+network 192.168.11.128 0.0.0.63 area 0
+network 192.168.11.192 0.0.0.63 area 0
+
+vlan 70
+vlan 80
+vlan 90
+vlan 100
+vlan 110
+vlan 120
+
+
+interface vlan 70
+no shutdown
+ip address 192.168.11.129 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 80
+no shutdown
+ip address 192.169.11.193 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 90
+no shutdown
+ip address 192.168.12.1 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 100
+no shutdown
+ip address 192.168.12.65 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 110
+no shutdown
+ip address 192.168.12.129 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 120
+no shutdown
+ip address 192.168.11.193 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+do write
+
+
+4th floor:
+interface gig1/0/1
+ip address 10.10.10.49 255.255.255.252
+exit
+
+interface gig1/0/2
+ip address 10.10.10.53 255.255.255.252
+exit
+
+
+ip routing
+router osfp 10
+network 10.10.10.52 0.0.0.3 area 0
+network 10.10.10.48 0.0.0.3 area 0
+
+network 192.168.11.128 0.0.0.63 area 0
+network 192.168.11.192 0.0.0.63 area 0
+network 192.168.12.0 0.0.0.63 area 0
+network 192.168.12.64 0.0.0.63 area 0
+network 192.168.11.128 0.0.0.63 area 0
+network 192.168.11.192 0.0.0.63 area 0
+
+vlan 70
+vlan 80
+vlan 90
+vlan 100
+vlan 110
+vlan 120
+
+
+interface vlan 70
+no shutdown
+ip address 192.168.11.129 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 80
+no shutdown
+ip address 192.169.11.193 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 90
+no shutdown
+ip address 192.168.12.1 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 100
+no shutdown
+ip address 192.168.12.65 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 110
+no shutdown
+ip address 192.168.12.129 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+interface vlan 120
+no shutdown 
+ip address 192.168.12.193 255.255.255.192
+ip helper-address 192.168.12.196
+exit
+
+do write
+
+
+----------------------------------------
+
+########################################
+Router:-the ip address for the router connection(14 connections) will be 10.10.10.1 to 10.10.10.52, with a 4 ip address gap and the subnet mask will be 252 or /30 with 2 host address
+
+enable
+config t
+hostname F1-Router
+
+banner motd #
+______________________________________________
+
+              Floor Router
+______________________________________________#
+
+
+line console 0
+password cisco
+login
+exit
+
+ip domain-name cisco.net
+username cisco password cisco
+crytpo key generate rsa
+1024
+line vty 0 15
+login local
+transport input ssh
+exit
+
+
+do write
+
+---------------------------------
+1st router
+
+interface gig0/1
+ip address 10.10.10.2 255.255.255.252
+exit
+
+interface gig0/2
+ip address 10.10.10.6 255.255.255.252
+exit
+
+interface se0/1
+ip address 10.10.10.33 255.255.255.252
+exit
+
+interface se0/2
+ip address 10.10.10.17 255.255.255.252
+exit
+
+interface gig0/0
+ip address 10.10.10.29 255.255.255.252
+exit
+
+router ospf 10
+network 10.10.10.0 0.0.0.3 area 0
+network 10.10.10.4 0.0.0.3 area 0
+network 10.10.10.16 0.0.0.3 area 0
+network 10.10.10.28 0.0.0.3 area 0
+network 10.10.10.32 0.0.0.3 area 0
+do write
+
+
+2nd router
+
+interface gig0/1
+ip address 10.10.10.10 255.255.255.252
+exit
+
+interface gig0/2
+ip address 10.10.10.14 255.255.255.252
+exit
+
+interface se0/1
+ip address 10.10.10.18 255.255.255.252
+exit
+
+interface se0/2
+ip address 10.10.10.25 255.255.255.252
+exit
+
+interface gig0/1
+ip address 10.10.10.21 255.255.255.252
+exit
+
+router ospf 10
+network 10.10.10.8 0.0.0.3 area 0
+network 10.10.10.12 0.0.0.3 area 0
+network 10.10.10.16 0.0.0.3 area 0
+network 10.10.10.20 0.0.0.3 area 0
+network 10.10.10.24 0.0.0.3 area 0
+do write
+
+
+3rd floor
+
+interface gig0/1
+ip address 10.10.10.42 255.255.255.252
+exit
+
+interface gig0/2
+ip address 10.10.10.50 255.255.255.252
+exit
+
+interface se0/1
+ip address 10.10.10.37 255.255.255.252
+exit
+
+interface se0/2
+ip address 10.10.10.33 255.255.255.252
+exit
+
+interface gig0/0
+ip address 10.10.10.21 255.255.255.252
+exit
+
+router ospf 10
+network 10.10.10.20 0.0.0.3 area 0
+network 10.10.10.32 0.0.0.3 area 0
+network 10.10.10.36 0.0.0.3 area 0
+network 10.10.10.40 0.0.0.3 area 0
+network 10.10.10.48 0.0.0.3 area 0
+do write
+
+
+4th router
+
+interface gig0/1
+ip address 10.10.10.46 255.255.255.252
+exit
+
+interface gig0/2
+ip address 10.10.10.54 255.255.255.252
+exit
+
+interface se0/1
+ip address 10.10.10.38 255.255.255.252
+exit
+
+interface se0/2
+ip address 10.10.10.26 255.255.255.252
+exit
+
+interface gig0/1
+ip address 10.10.10.30 255.255.255.252
+exit
+
+router ospf 10
+network 10.10.10.24 0.0.0.3 area 0
+network 10.10.10.28 0.0.0.3 area 0
+network 10.10.10.36 0.0.0.3 area 0
+network 10.10.10.44 0.0.0.3 area 0
+network 10.10.10.52 0.0.0.3 area 0
+do write
+
+------------------------------------------
+do show start
+------------------------------------------
+
+dhcp server
+
+on the desktop tab
+statics ip address: 192.168.12.196 
+subnet mask:        255.255.255.192
+default gateway:    192.168.12.193
+
+statics ip address: 192.168.12.197 
+subnet mask:        255.255.255.192
+default gateway:    192.168.12.193
+
+statics ip address: 192.168.12.198 
+subnet mask:        255.255.255.192
+default gateway:    192.168.12.193
+
+on the service tab 
+turn on DHCP
+create a pool name for the server and every switch, default gateway(the ip on the device)
+
+on the dns tab give it a website, the address will be the dame as the address of the server
+
+for the wireless connection: configure port 2, SSID name after the switch's names, passphrase could anything
+
+for the laptop
+add WPC360N  
+
+go on the desktop and connect it to the wireless connection
