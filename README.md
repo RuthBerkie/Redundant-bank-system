@@ -1,6 +1,6 @@
-![Redundant Bank System Topology](topology.jpg)
+# 📶 Redundant-bank-system
 
-📶 Redundant-bank-system
+![Redundant Bank System Topology](topology.jpg)
 
 As the name states, its a redundant connection of different network components to have efficient and secure way of transferring packets.
 
